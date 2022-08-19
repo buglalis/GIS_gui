@@ -27,12 +27,41 @@ cd ${HOME}/dev/cpp
 ## 1.3 Клонирование QGIS
 ```
 cd ${HOME}/dev/cpp
-git clone git://github.com/qgis/QGIS.git
+git clone https://github.com/qgis/QGIS.git
 ```
 
 ## 1.4 Компиляция QGIS 
 
-Предполагается, что компиляции QGIS осуществляется в каталог ~/apps, чтобы избежать конфликтов с пакетами Ubuntu, которые могут находиться в каталоге /usr. Для этого необходимо создать каталог:
+Предполагается, что компиляции QGIS осуществляется в каталог ~/qgis-install, чтобы избежать конфликтов с пакетами Ubuntu, которые могут находиться в каталоге /usr. Для этого необходимо создать каталог:
+```
+mkdir -p ${HOME}/qgis-install
+```
+После создания каталога необходимо запустить ccmake:
+```
+cd QGIS
+mkdir build
+cd build
+ccmake ..
+```
+Для установки qgis в каталог ~/apps необходимо переменной CMAKE_INSTALL_PREFIX задать значение %{HOME}/qgis-install.
+После генерации, необходимо запустить компиляцию и установку:
+```
+make -jX
+make install
+```
+где X - количество свободных потоков.
 
-mkdir -p ${HOME}/apps
+## 1.5 Клонирование GIS_gui 
 
+```
+cd ${HOME}/dev/cpp
+git clone https://github.com/VasiliyBugaev/GIS_gui.git
+```
+## 1.6 Компиляция GIS_gui 
+
+```
+cd GIS_gui
+mkdir build
+cd build
+ccmake -DQGIS_PATH=<путь к директории с установленным QGIS>..
+```
