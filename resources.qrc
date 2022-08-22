@@ -1,0 +1,47 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/saveAs.png</file>
+        <file>icons/save.png</file>
+        <file>icons/open.png</file>
+        <file>icons/create.png</file>
+        <file>icons/changeColor.png</file>
+        <file>icons/full.png</file>
+        <file>icons/zoomToTraj.png</file>
+        <file>icons/zoomOut.png</file>
+        <file>icons/zoomIn.png</file>
+        <file>icons/grab.png</file>
+        <file>icons/stop.png</file>
+        <file>icons/play.png</file>
+        <file>icons/pause.png</file>
+        <file>icons/plus_mini.png</file>
+        <file>icons/plus.png</file>
+        <file>icons/refresh.png</file>
+        <file>icons/showAll.png</file>
+        <file>icons/notExpand.png</file>
+        <file>icons/newGroup.png</file>
+        <file>icons/hideAll.png</file>
+        <file>icons/expand.png</file>
+        <file>icons/airplane.svg</file>
+        <file>icons/ship.svg</file>
+        <file>icons/rocket.svg</file>
+        <file>icons/position.png</file>
+        <file>icons/loading.gif</file>
+        <file>icons/ballistics.png</file>
+        <file>icons/plus_mini2.png</file>
+        <file>icons/archive.svg</file>
+        <file>icons/vline.png</file>
+        <file>icons/branch-open.png</file>
+        <file>icons/branch-more.png</file>
+        <file>icons/branch-end.png</file>
+        <file>icons/branch-closed.png</file>
+        <file>icons/showAll.svg</file>
+        <file>icons/plus_mini0.png</file>
+        <file>icons/plus_file.png</file>
+        <file>icons/hideAll.svg</file>
+        <file>icons/plus.svg</file>
+        <file>icons/litpm.jpg</file>
+        <file>icons/up.png</file>
+        <file>icons/down.png</file>
+        <file>icons/pointToPoint.svg</file>
+    </qresource>
+</RCC>
