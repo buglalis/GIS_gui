@@ -13,7 +13,7 @@ namespace gisUI {
     class GISMapContoller: public QObject{
     Q_OBJECT
     public:
-        GISMapContoller(QWidget* parent = nullptr);
+        explicit GISMapContoller(QWidget* parent = nullptr);
 
     private:
         CentralWidget* centralWidget;
@@ -25,9 +25,12 @@ namespace gisUI {
         void setCentralWidget(CentralWidget *centralWidget);
 
     signals:
-        void openLayerRequest();
-    public slots:
-        void openLayer();
+        void openLayerFileDialogRequest();
+        void openProjectFileDialogRequest();
+        void saveProjectFileDialogRequest();
+        void saveAsProjectFileDialogRequest();
+        void createProjectMessageBoxRequest();
+
     };
 }
 

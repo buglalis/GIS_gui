@@ -117,4 +117,24 @@ namespace gisUI {
         GISMapLayerManager::root = root;
     }
 
+    void GISMapLayerManager::readLayersFromProj(const QString &path, const QgsCoordinateReferenceSystem& destCoord) {
+        QgsProject::instance()->read(path);
+        QMap<QString, QgsMapLayer*> mapLayers = QgsProject::instance()->layerStore()->mapLayers();
+        QList<QgsMapLayer*> list = mapLayers.values();
+
+        setMainCrs(destCoord);
+        sendLayers(list);
+        QList<QgsMapLayer*> tmp;
+        for (auto layer : list) {
+            if (layer->type() == QgsMapLayerType::VectorLayer) {
+                tmp.push_back(layer);
+            }
+        }
+        userAddedLayers = tmp;
+    }
+
+    void GISMapLayerManager::clearLayers() {
+        userAddedLayers.clear();
+        //ToDo:: addRemoving auxLayers
+    }
 }

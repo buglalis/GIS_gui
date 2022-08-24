@@ -7,24 +7,43 @@
 #include <qgssymbol.h>
 #include <qgssinglesymbolrenderer.h>
 #include <QDebug>
+#include <QMessageBox>
 #include "GISMapWidget.h"
 
 namespace gisUI {
 
     MapTools::MapTools(QgsMapCanvas *canvas) {
-        panTool       = std::make_unique<QgsMapToolPan>(canvas);
-        zoomInCursor  = QCursor(QPixmap(":/icons/zoomIn.png").scaled(20, 20, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
-        zoomOutCursor = QCursor(QPixmap(":/icons/zoomOut.png").scaled(20, 20, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
-        zoomInTool    = std::make_unique<QgsMapToolZoom>(canvas, false);
-        zoomOutTool   = std::make_unique<QgsMapToolZoom>(canvas, true);
-        zoomInTool->setCursor(zoomInCursor);
-        zoomOutTool->setCursor(zoomOutCursor);
+        panTool       = new QgsMapToolPan(canvas);
+        zoomInCursor  = new QCursor(QPixmap(":/icons/zoomIn.png").scaled(20, 20, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
+        zoomOutCursor = new QCursor(QPixmap(":/icons/zoomOut.png").scaled(20, 20, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
+        zoomInTool    = new QgsMapToolZoom(canvas, false);
+        zoomOutTool   = new QgsMapToolZoom(canvas, true);
+        zoomInTool->setCursor(*zoomInCursor);
+        zoomOutTool->setCursor(*zoomOutCursor);
         //инструмент выделения точек
-        identifyCursor = QCursor(QPixmap(":/icons/position.png").scaled(20, 20, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
-        identifyFeature   = std::make_unique<QgsMapToolIdentifyFeature>(canvas);
-        identifyFeature->setCursor(identifyCursor);
-        identifyTool      = std::make_unique<QgsMapToolIdentify>(canvas);
-        emitPointTool     = std::make_unique<QgsMapToolEmitPoint>(canvas);
+        identifyCursor = new QCursor(QPixmap(":/icons/position.png").scaled(20, 20, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
+        identifyFeature   = new QgsMapToolIdentifyFeature(canvas);
+        identifyFeature->setCursor(*identifyCursor);
+        identifyTool      = new QgsMapToolIdentify(canvas);
+        emitPointTool     = new QgsMapToolEmitPoint (canvas);
+    }
+
+    MapTools::~MapTools() {
+        if (panTool!=nullptr)
+            delete panTool;
+        if (zoomInTool!=nullptr)
+            delete zoomInTool;
+        if (zoomOutTool!=nullptr)
+            delete zoomOutTool;
+        if (identifyTool!=nullptr)
+            delete identifyTool;
+        if (zoomInCursor!=nullptr)
+            delete zoomInCursor;
+        if (zoomOutCursor!=nullptr)
+            delete zoomOutCursor;
+        if (identifyCursor!=nullptr)
+            delete identifyCursor;
+
     }
 
     QList<QgsVectorLayer *> LayerHandler::handleLayerBase(const QString &layerPath, const QString& layerName) const {
@@ -36,7 +55,7 @@ namespace gisUI {
             onlyName == "controlPoints" ||
             onlyName == "controlLines" ||
             onlyName == "trajectories") {
-//            createWarningWindow("Ошибка!", "Нельзя добавить слой с названием points/controlPoints/controlLines/trajectories");
+//           ToDo: createWarningWindow("Ошибка!", "Нельзя добавить слой с названием points/controlPoints/controlLines/trajectories");
             return {};
         }
 
@@ -74,7 +93,7 @@ namespace gisUI {
         setParallelRenderingEnabled(true);
         setCachingEnabled(true);
         setPreviewJobsEnabled(true);
-        setMapUpdateInterval(100); //ToDO::check possible values
+        setMapUpdateInterval(500); //ToDO::check possible values
 
     }
 
@@ -117,5 +136,123 @@ namespace gisUI {
 
     void GISMapWidget::setDestCoords(QgsCoordinateReferenceSystem coords) {
         setDestinationCrs(coords);
+    }
+
+    void GISMapWidget::openProject() {
+        switch(resetMessageBox()) {
+            case QMessageBox::Save:
+                saveAsProject();
+                break;
+            case QMessageBox::Discard:
+                break;
+            case QMessageBox::Cancel:
+                return;
+        }
+        QFileDialog dialog(this, QString("Открыть проект").toLocal8Bit(), "", QString("*.qgs").toLocal8Bit());
+        dialog.setOption(QFileDialog::DontUseNativeDialog);
+        if (dialog.exec() == QDialog::Accepted)
+        {
+//            emit projectClosed(); ToDo:: create signal when working with traj
+            QString path = dialog.selectedFiles().at(0);
+            emit readLayersFromProjRequest(path, mapSettings().destinationCrs());
+        }
+    }
+
+    void GISMapWidget::saveProject() {
+        if (QgsProject::instance()->fileInfo().exists())
+        {
+//            emit auxLayersDeletedRequest();//ToDO:: add func
+            QgsProject::instance()->write();
+//            emit auxLayersAddedRequest(); //ToDO:: add func
+        }
+        else
+            saveAsProject();
+    }
+
+    void GISMapWidget::saveAsProject() {
+        QString dir = "";
+        QString filename = "";
+        if (QgsProject::instance()->fileInfo().exists())
+        {
+            dir = QgsProject::instance()->absolutePath();
+            filename = QgsProject::instance()->fileName();
+        }
+        QFileDialog dialog(this, QString("Сохранить проект").toLocal8Bit(), dir, QString("*.qgs").toLocal8Bit());
+        dialog.setOption(QFileDialog::DontUseNativeDialog);
+        if (filename != "")
+            dialog.selectFile(filename);
+        dialog.setDefaultSuffix("qgs");
+        dialog.setAcceptMode(QFileDialog::AcceptSave);
+        if (dialog.exec() == QDialog::Accepted)
+        {
+            QString str = dialog.selectedFiles().at(0);
+            if (!str.endsWith(".qgs"))
+                str += ".qgs";
+            QgsProject::instance()->setFileName(str);
+//            emit auxLayersDeletedRequest();//ToDO:: add func
+            QgsProject::instance()->write();
+//            emit auxLayersAddedRequest(); //ToDO:: add func
+        }
+    }
+
+    void GISMapWidget::createProject() {
+        switch(resetMessageBox()) {
+            case QMessageBox::Save:
+                saveAsProject();
+                break;
+            case QMessageBox::Discard:
+                break;
+            case QMessageBox::Cancel:
+                return;
+        }
+        //ToDO:: уведомление о том, что текущий сценарий будет удален
+//        emit projectClosed();
+//        userAddedLayers.clear();
+        QgsProject::instance()->clear();
+        refresh();
+    }
+
+    int GISMapWidget::resetMessageBox() {
+        QMessageBox* box = new QMessageBox(this);
+        box->setWindowTitle("Сохранить изменения?");
+        box->setText("Изменения в текущем проекте не будут сохранены");
+        box->setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+        box->setButtonText(QMessageBox::Save, "Сохранить");
+        box->setButtonText(QMessageBox::Discard, "Не сохранить");
+        box->setButtonText(QMessageBox::Cancel, "Отменить");
+        return box->exec();
+    }
+
+    void GISMapWidget::activatePan() {
+        if (tools.activated != MapTools::Tools::PAN) {
+            setMapTool(tools.panTool);
+            tools.activated = MapTools::Tools::PAN;
+        }
+        else {
+            unsetMapTool(tools.panTool);
+            tools.activated = MapTools::Tools::NONE;
+        }
+    }
+
+    void GISMapWidget::activateZoomIn() {
+        if (tools.activated != MapTools::Tools::ZOOM_IN) {
+            setMapTool(tools.zoomInTool);
+            tools.activated = MapTools::Tools::ZOOM_IN;
+        }
+        else {
+            unsetMapTool(tools.zoomInTool);
+            tools.activated = MapTools::Tools::NONE;
+        }
+    }
+
+    void GISMapWidget::activateZoomOut() {
+        if (tools.activated != MapTools::Tools::ZOOM_OUT) {
+            setMapTool(tools.zoomOutTool);
+            tools.activated = MapTools::Tools::ZOOM_OUT;
+        }
+        else {
+            unsetMapTool(tools.zoomOutTool);
+            tools.activated = MapTools::Tools::NONE;
+        }
     }
 }

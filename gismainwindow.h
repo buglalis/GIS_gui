@@ -8,6 +8,9 @@
 #include <QMainWindow>
 #include "widgets/menu/MenuController.h"
 #include "widgets/map/GISMapContoller.h"
+#include "database/DatabaseController.h"
+
+
 namespace gisUI {
     class GISMainWindow : public QMainWindow {
     Q_OBJECT
@@ -20,6 +23,7 @@ namespace gisUI {
         MenuController* menuController;
         QToolBar* toolBar;
         GISMapContoller* mapController;
+        DatabaseController* dbController;
 
     };
 }

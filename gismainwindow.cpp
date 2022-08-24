@@ -6,8 +6,7 @@
 
 #include "gismainwindow.h"
 #include <QDebug>
-#include <qgslayertreemapcanvasbridge.h>
-#include "widgets/map/GISMapWidget.h"
+
 namespace gisUI {
 
     GISMainWindow::GISMainWindow(QWidget *parent) :
@@ -17,7 +16,14 @@ namespace gisUI {
         menuController = new MenuController(this->menuBar(),toolBar);
         mapController = new GISMapContoller(this);
         setCentralWidget(mapController->getCentralWidget());
-        connect(menuController, &MenuController::openLayerRequest, mapController, &GISMapContoller::openLayer);
+        connect(menuController, &MenuController::openLayerRequest, mapController, &GISMapContoller::openLayerFileDialogRequest);
+        connect(menuController, &MenuController::openProjectRequest, mapController, &GISMapContoller::openProjectFileDialogRequest);
+        connect(menuController, &MenuController::saveProjectRequest, mapController, &GISMapContoller::saveProjectFileDialogRequest);
+        connect(menuController, &MenuController::saveAsProjectRequest, mapController, &GISMapContoller::saveAsProjectFileDialogRequest);
+        connect(menuController, &MenuController::createProjectRequest, mapController, &GISMapContoller::createProjectMessageBoxRequest);
+
+        dbController = new DatabaseController;
+        this->menuBar()->addMenu(dbController->getDbMenu());
 
     }
 }

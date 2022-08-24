@@ -17,19 +17,24 @@ namespace gisUI {
 
 
     struct MapTools{
-        std::unique_ptr<QgsMapToolIdentifyFeature> identifyFeature;
-        std::unique_ptr<QgsMapToolZoom> zoomInTool;
-        std::unique_ptr<QgsMapToolZoom> zoomOutTool;
-        std::unique_ptr<QgsMapToolPan> panTool;
+        enum class Tools{PAN,ZOOM_IN, ZOOM_OUT, IDENTIFY, EMIT_POINT, NONE};
+       QgsMapToolIdentifyFeature* identifyFeature;
+       QgsMapToolZoom* zoomInTool;
+       QgsMapToolZoom* zoomOutTool;
+       QgsMapToolPan* panTool;
 
-        std::unique_ptr<QgsMapToolEmitPoint> emitPointTool;
-        std::unique_ptr<QgsMapToolIdentify> identifyTool;
+       QgsMapToolEmitPoint* emitPointTool;
+       QgsMapToolIdentify* identifyTool;
 
-        QCursor zoomInCursor;
-        QCursor zoomOutCursor;
-        QCursor identifyCursor;
+        QCursor* zoomInCursor;
+        QCursor* zoomOutCursor;
+        QCursor* identifyCursor;
 
+        Tools activated = Tools::NONE;
         MapTools(QgsMapCanvas* canvas);
+        ~MapTools();
+        MapTools(const MapTools& other) = delete;
+        MapTools& operator=(const MapTools& other) = delete;
     };
 
     class LayerHandler {
@@ -63,24 +68,32 @@ namespace gisUI {
     class GISMapWidget: public QgsMapCanvas {
         Q_OBJECT
     public:
-        GISMapWidget(QWidget* parent = nullptr);
+        explicit GISMapWidget(QWidget* parent = nullptr);
         ~GISMapWidget();
 
         void updateLayers(QList<QgsMapLayer*> layers);
     public slots:
         void addLayer();
+        void openProject();
+        void saveProject();
+        void saveAsProject();
+        void createProject();
+
+        void activatePan();
+        void activateZoomIn();
+        void activateZoomOut();
+
         void setupExtent(QgsRectangle rect);
         void setDestCoords(QgsCoordinateReferenceSystem coords);
     signals:
         void layerAdded();
         void setNewVectorLayersRequest(QList<QgsVectorLayer*> layers);
+        void readLayersFromProjRequest(const QString& path, const QgsCoordinateReferenceSystem destCoord);
+        void clearLayersRequest();
     private:
-
         MapTools tools;
+        int resetMessageBox();
 
-
-
-//        void setNewVectorLayers(std::vector<std::unique_ptr<QgsVectorLayer>> layers);
     };
 }
 

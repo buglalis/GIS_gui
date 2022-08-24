@@ -8,18 +8,26 @@
 namespace gisUI {
 
 
-    CentralWidget::CentralWidget(QWidget *parent) {
+    CentralWidget::CentralWidget(QWidget *parent):
+    btns {[=] {
+                mapBar = new QToolBar(this);
+                return mapBar;}()}{
+
         toolLayout = new QBoxLayout(QBoxLayout::TopToBottom);
         toolLayout->setContentsMargins(0, 0, 0, 0);
         mapBar = new QToolBar(this);
-        actions = new MapActions;
-        btns = new ModelingButtons(mapBar);
+
         fillMapBar();
         toolLayout->addWidget(mapBar);
         mapWidget = new GISMapWidget(this);
         mapWidget->setMinimumSize(600,400);
         toolLayout->addWidget(mapWidget);
         setLayout(toolLayout);
+
+        connect(actions.panAction, &QAction::triggered, mapWidget,&GISMapWidget::activatePan);
+        connect(actions.zoomInAction, &QAction::triggered, mapWidget,&GISMapWidget::activateZoomIn);
+        connect(actions.zoomOutAction, &QAction::triggered, mapWidget,&GISMapWidget::activateZoomOut);
+        connect(actions.fullExtentAction, &QAction::triggered, mapWidget, &GISMapWidget::zoomToFullExtent);
     }
 
     CentralWidget::~CentralWidget() {
@@ -27,10 +35,6 @@ namespace gisUI {
             delete toolLayout;
         if (mapBar!= nullptr)
             delete mapBar;
-        if (actions!= nullptr)
-            delete actions;
-        if (btns!= nullptr)
-            delete btns;
     }
 
     void CentralWidget::fillMapBar() {
@@ -38,22 +42,18 @@ namespace gisUI {
         spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         spacer->setVisible(true);
 
-        mapBar->addAction(actions->panAction);
-        mapBar->addAction(actions->zoomInAction);
-        mapBar->addAction(actions->zoomOutAction);
-        mapBar->addAction(actions->zoomToTrajAction);
-        mapBar->addAction(actions->fullExtentAction);
+        mapBar->addAction(actions.panAction);
+        mapBar->addAction(actions.zoomInAction);
+        mapBar->addAction(actions.zoomOutAction);
+        mapBar->addAction(actions.zoomToTrajAction);
+        mapBar->addAction(actions.fullExtentAction);
         mapBar->addSeparator();
-        mapBar->addAction(actions->pointsColor);
+        mapBar->addAction(actions.pointsColor);
         mapBar->addWidget(spacer);
-        mapBar->addWidget(btns->playBtn);
-        mapBar->addWidget(btns->pauseBtn);
-        mapBar->addWidget(btns->stopBtn);
+        mapBar->addWidget(btns.playBtn);
+        mapBar->addWidget(btns.pauseBtn);
+        mapBar->addWidget(btns.stopBtn);
 
-    }
-
-    void CentralWidget::openLayerDialog() {
-        mapWidget->addLayer();
     }
 
     void CentralWidget::setLayers(QList<QgsMapLayer *> layers) {
@@ -63,10 +63,4 @@ namespace gisUI {
     GISMapWidget *CentralWidget::getMapWidget() const {
         return mapWidget;
     }
-
-    void CentralWidget::setMapWidget(GISMapWidget *mapWidget) {
-        CentralWidget::mapWidget = mapWidget;
-    }
-
-
 }

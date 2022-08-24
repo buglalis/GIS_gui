@@ -44,12 +44,4 @@ namespace gisUI {
         stopBtn->setIcon(QIcon(":/icons/stop.png"));
     }
 
-    ModelingButtons::~ModelingButtons() {
-        if (playBtn!= nullptr)
-            delete playBtn;
-        if (stopBtn!= nullptr)
-            delete stopBtn;
-        if (pauseBtn!= nullptr)
-            delete pauseBtn;
-    }
 }

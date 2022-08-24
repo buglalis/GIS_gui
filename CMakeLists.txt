@@ -18,10 +18,13 @@ find_package(Qt5 COMPONENTS
         Gui
         Widgets
         Xml
+        Sql
         REQUIRED)
 
 link_directories(/usr/lib)
 link_directories(${QGIS_PATH}/lib)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_executable(GIS_gui  main.cpp
                         gismainwindow.cpp
@@ -34,7 +37,7 @@ add_executable(GIS_gui  main.cpp
                         widgets/tools/MapActions.h
                         widgets/tools/CustomControlButton.cpp
                         widgets/tools/CustomControlButton.h
-                        resources.qrc widgets/map/GISMapLayerManager.cpp widgets/map/GISMapLayerManager.h widgets/map/GISMapContoller.cpp widgets/map/GISMapContoller.h widgets/menu/MenuController.cpp widgets/menu/MenuController.h)
+                        resources.qrc widgets/map/GISMapLayerManager.cpp widgets/map/GISMapLayerManager.h widgets/map/GISMapContoller.cpp widgets/map/GISMapContoller.h widgets/menu/MenuController.cpp widgets/menu/MenuController.h widgets/input/InputWidget.cpp widgets/input/InputWidget.h database/DatabaseWorker.cpp database/DatabaseWorker.h database/DatabaseBrowser.cpp database/DatabaseBrowser.h database/DatabaseController.cpp database/DatabaseController.h)
 
 target_include_directories(GIS_gui PRIVATE
                                     ${QGIS_PATH}/include/qgis
@@ -46,6 +49,7 @@ target_link_libraries(GIS_gui
         Qt5::Gui
         Qt5::Widgets
         Qt5::Xml
+        Qt5::Sql
         qgis_native
         qgis_core
         qgis_app

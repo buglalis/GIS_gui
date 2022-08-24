@@ -10,9 +10,17 @@ namespace gisUI {
         centralWidget = new CentralWidget;
         manager = new GISMapLayerManager;
         bridge = new QgsLayerTreeMapCanvasBridge(manager->getRoot(), centralWidget->getMapWidget());
-        connect(this, &GISMapContoller::openLayerRequest, centralWidget, &CentralWidget::openLayerDialog);
+        connect(this, &GISMapContoller::openLayerFileDialogRequest, centralWidget->getMapWidget(), &GISMapWidget::addLayer);
+        connect(this, &GISMapContoller::openProjectFileDialogRequest, centralWidget->getMapWidget(), &GISMapWidget::openProject);
+        connect(this, &GISMapContoller::saveProjectFileDialogRequest, centralWidget->getMapWidget(), &GISMapWidget::saveProject);
+        connect(this, &GISMapContoller::saveAsProjectFileDialogRequest,centralWidget->getMapWidget(), &GISMapWidget::saveAsProject);
+        connect(this, &GISMapContoller::createProjectMessageBoxRequest,centralWidget->getMapWidget(), &GISMapWidget::createProject);
+
+
         connect(manager, &GISMapLayerManager::sendLayers, centralWidget, &CentralWidget::setLayers);
         connect(centralWidget->getMapWidget(), &GISMapWidget::setNewVectorLayersRequest, manager, &GISMapLayerManager::setNewVectorLayers);
+        connect(centralWidget->getMapWidget(), &GISMapWidget::readLayersFromProjRequest, manager, &GISMapLayerManager::readLayersFromProj);
+        connect(centralWidget->getMapWidget(), &GISMapWidget::clearLayersRequest, manager, &GISMapLayerManager::clearLayers);
     }
 
 
@@ -25,7 +33,4 @@ namespace gisUI {
         GISMapContoller::centralWidget = centralWidget;
     }
 
-    void GISMapContoller::openLayer() {
-        emit openLayerRequest();
-    }
 }

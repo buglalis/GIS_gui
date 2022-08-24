@@ -26,14 +26,11 @@ namespace gisUI {
     };
 
     struct ModelingButtons{
-        CustomControlButton* playBtn;
-        CustomControlButton* pauseBtn;
-        CustomControlButton* stopBtn;
+        CustomControlButton* playBtn = nullptr;
+        CustomControlButton* pauseBtn = nullptr;
+        CustomControlButton* stopBtn = nullptr;
 
         ModelingButtons(QToolBar* toolBar = nullptr);
-        ~ModelingButtons();
-        ModelingButtons(const ModelingButtons *widget) = delete;
-        ModelingButtons &operator=(const ModelingButtons *widget) = delete;
     };
 }
 

@@ -16,7 +16,7 @@ namespace gisUI {
     class CentralWidget : public QWidget {
     Q_OBJECT
     public:
-        CentralWidget(QWidget *parent = nullptr);
+        explicit CentralWidget(QWidget *parent = nullptr);
 
         ~CentralWidget();
 
@@ -27,21 +27,17 @@ namespace gisUI {
     private:
         QBoxLayout *toolLayout;
         QToolBar* mapBar;
-        MapActions *actions;
-        ModelingButtons* btns;
+        MapActions actions;
+        ModelingButtons btns;
 
         GISMapWidget* mapWidget;
     public:
         GISMapWidget *getMapWidget() const;
-
         void setMapWidget(GISMapWidget *mapWidget);
-
     private:
-
         void fillMapBar();
 
     public slots:
-        void openLayerDialog();
         void setLayers(QList<QgsMapLayer*> layers);
     };
 }

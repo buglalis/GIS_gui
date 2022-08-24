@@ -34,23 +34,26 @@ namespace gisUI{
 
     MenuController::MenuController(QMenuBar *menuBar, QToolBar* toolBar) {
         QMenu* mapMenu = new QMenu("Карта");
-        actions = new MapMenuActions;
         addMapActions(mapMenu);
         addMapActions(toolBar);
         menuBar->addMenu(mapMenu);
 
-        connect(actions->addLayerAction, &QAction::triggered, this, &MenuController::openLayerRequest);
+        connect(actions.createProjectAction, &QAction::triggered, this, &MenuController::createProjectRequest);
+        connect(actions.addLayerAction, &QAction::triggered, this, &MenuController::openLayerRequest);
+        connect(actions.openProjectAction, &QAction::triggered, this, &MenuController::openProjectRequest);
+        connect(actions.saveProjectAction, &QAction::triggered, this, &MenuController::saveProjectRequest);
+        connect(actions.saveAsProjectAction, &QAction::triggered, this, &MenuController::saveAsProjectRequest);
     }
 
     void MenuController::addMapActions(QWidget *widget) {
-       widget->addAction(actions->addLayerAction);
+       widget->addAction(actions.addLayerAction);
        QAction* separatorAction = new QAction;
        separatorAction->setSeparator(true);
        widget->addAction(separatorAction);
-       widget->addAction(actions->createProjectAction);
-       widget->addAction(actions->openProjectAction);
-       widget->addAction(actions->saveProjectAction);
-       widget->addAction(actions->saveAsProjectAction);
+       widget->addAction(actions.createProjectAction);
+       widget->addAction(actions.openProjectAction);
+       widget->addAction(actions.saveProjectAction);
+       widget->addAction(actions.saveAsProjectAction);
        widget->addAction(separatorAction);
     }
 }

@@ -35,21 +35,18 @@ namespace gisUI {
         QgsCoordinateReferenceSystem getCurrentCRS();
         QMap<QString, QString> getLayersChecksum();
         unsigned getLayerSize();
+        QgsLayerTree *getRoot() const;
+        void setRoot(QgsLayerTree *root);
 
     public slots:
         void setNewVectorLayers(QList<QgsVectorLayer*> layers);
+        void readLayersFromProj(const QString& path, const QgsCoordinateReferenceSystem& destCoord);
+        void clearLayers();
     private:
         Coordinates coords;
         CoordinateTransform transforms;
         QList<QgsMapLayer*> userAddedLayers;
         QgsLayerTree *root;
-    public:
-        QgsLayerTree *getRoot() const;
-
-        void setRoot(QgsLayerTree *root);
-
-    private:
-
         QgsRectangle getLayerExtentInMainCrs(const QgsCoordinateReferenceSystem &crs, const QgsRectangle &oldExtent);
         QgsRectangle getLayerExtentInWgs84(const QgsCoordinateReferenceSystem &crs, const QgsRectangle &oldExtent);
         QgsRectangle getLayerExtentInCurrentCrs(const QgsCoordinateReferenceSystem &crs, const QgsRectangle &oldExtent);
@@ -60,7 +57,7 @@ namespace gisUI {
 
 
         void createAuxiliaryLayers();
-        signals:
+    signals:
         void setLayersRequest();
         void sendLayers(QList<QgsMapLayer*> layers);
         void sendExtent(QgsRectangle rect);

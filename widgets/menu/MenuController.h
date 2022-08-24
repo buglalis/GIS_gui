@@ -28,13 +28,17 @@ namespace gisUI {
     class MenuController:public QObject {
         Q_OBJECT
     private:
-        MapMenuActions* actions;
+        MapMenuActions actions;
 
         void addMapActions(QWidget* widget);
     public:
         MenuController(QMenuBar* menuBar, QToolBar* toolBar);
     signals:
+        void createProjectRequest();
         void openLayerRequest();
+        void openProjectRequest();
+        void saveProjectRequest();
+        void saveAsProjectRequest();
 
     };
 }
