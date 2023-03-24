@@ -41,7 +41,7 @@ mkdir -p ${HOME}/qgis-install
 cd QGIS
 mkdir build
 cd build
-ccmake ..
+cmake ..
 ```
 Для установки qgis в каталог ~/apps необходимо переменной CMAKE_INSTALL_PREFIX задать значение %{HOME}/qgis-install.
 После генерации, необходимо запустить компиляцию и установку:
